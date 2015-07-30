@@ -1,7 +1,6 @@
 #include <SPI.h>
 #include <nRF24L01.h>
 #include <RF24.h>
-
 /*-----( Declare Constants and Pin Numbers )-----*/
 #define CE_PIN   9
 #define CSN_PIN 10
@@ -9,7 +8,8 @@
 #define JOYSTICK1_X A1
 #define JOYSTICK2_Y A2
 #define JOYSTICK2_X A3
-
+#define SELECT1 2
+#define SELECT2 4
 
 // NOTE: the "LL" at the end of the constant is "LongLong" type
 const uint64_t pipe = 0xE8E8F0F0E1LL; // Define the transmit pipe
@@ -23,32 +23,14 @@ RF24 radio(CE_PIN, CSN_PIN); // Create a Radio
 int joystick1[3];
 int joystick2[3];
 
-//Joystick1
-int select1 = 2;
-//int vertical1 = 0;
-//int horizontal1 = 1;
-
-int selectState1 = 0;
-int vertState1=0;
-int horizState1=0;
-
-//Joystick2
-int select2 = 4;
-//int vertical2 = 2;
-//int horizontal2 = 3;
-
-int selectState2 = 0;
-int vertState2=0;
-int horizState2=0;
-
 void setup() {
-  pinMode(select1,INPUT);
-  pinMode(JOYSTICK1_Y,INPUT);
+  pinMode(SELECT1,INPUT);
   pinMode(JOYSTICK1_X,INPUT);
+  pinMode(JOYSTICK1_Y,INPUT);
 
-  pinMode(select2,INPUT);
-  pinMode(JOYSTICK2_Y,INPUT);
+  pinMode(SELECT2,INPUT);
   pinMode(JOYSTICK2_X,INPUT);
+  pinMode(JOYSTICK2_Y,INPUT);
 
   Serial.begin(9600);
   radio.begin();
@@ -59,38 +41,33 @@ void loop() {
 
   joystick1[0]=analogRead(JOYSTICK1_X);
   joystick1[1]=analogRead(JOYSTICK1_Y);
-  joystick1[2]=digitalRead(select1);
+  joystick1[2]=digitalRead(SELECT1);
 
   joystick2[0]=analogRead(JOYSTICK2_X);
   joystick2[1]=analogRead(JOYSTICK2_Y);
-  joystick2[2]=digitalRead(select2);
+  joystick2[2]=digitalRead(SELECT2);
 
   radio.write( joystick1, sizeof( joystick1) );
   radio.write( joystick2, sizeof( joystick2 ) );
   delay(100);
   
-/*  selectState1 = digitalRead(select1);
-  vertState1 = analogRead(JOYSTICK1_Y);
-  horizState1 = analogRead(JOYSTICK1_X);
-  
-  selectState2 = digitalRead(select2);
-  vertState2 = analogRead(JOYSTICK2_Y);
-  horizState2 = analogRead(JOYSTICK2_X);
-
   Serial.print("Joystick 1 is at: X: "); 
-  Serial.print(horizState1);
+  Serial.print(joystick1[0]);
   Serial.print("     Y: "); 
-  Serial.println(vertState1);
-
+  Serial.println(joystick1[1]);
+  Serial.print("Select1 = ");
+  Serial.println(joystick1[2]);
+  
   delay(100);
 
   Serial.print("Joystick 2 is at: X: "); 
-  Serial.print(horizState2);
+  Serial.print(joystick2[0]);
   Serial.print("     Y: "); 
-  Serial.println(vertState2);
+  Serial.println(joystick2[1]);
+  Serial.print("Select2 = ");
+  Serial.println(joystick2[2]);
+  
+
 
   delay(1000);
-
-  radio.write( vertState1 );
-*/
 }//close Loop
