@@ -1,2 +1,2 @@
 # remote-control
-Remote Control
+This is file for the transmitting circuit.
