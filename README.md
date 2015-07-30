@@ -1,2 +1,2 @@
 # remote-control
-This is file for the transmitting circuit.
+This repository will hold a file for the remote control transmitter and the remote control receiver.
