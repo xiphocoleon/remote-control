@@ -1,13 +1,35 @@
+/*
+ * Pinout for Arduino to nRF24L01+ from Yourduino:
+ *    1 - GND
+   2 - VCC 3.3V !!! NOT 5V
+   3 - CE to Arduino pin 9
+   4 - CSN to Arduino pin 10
+   5 - SCK to Arduino pin 13
+   6 - MOSI to Arduino pin 11
+   7 - MISO to Arduino pin 12
+   8 - UNUSED
+
+   *** But untested for Arduino Micro
+   * 
+*/
+ 
 #include <SPI.h>
 #include <nRF24L01.h>
 #include <RF24.h>
 
 /*-----( Declare Constants and Pin Numbers )-----*/
-#define CE_PIN   9
-#define CSN_PIN 10
+
+//Joystick pins
 #define JOYSTICK_X A0
 #define JOYSTICK_Y A1
 #define SELECT A2
+
+//Switches
+#define LASER_SW 5
+
+//nRF24L01+ pins
+#define CE_PIN   2
+#define CSN_PIN 3
 
 // NOTE: the "LL" at the end of the constant is "LongLong" type
 const uint64_t pipe = 0xE8E8F0F0E1LL; // Define the transmit pipe
@@ -19,6 +41,7 @@ RF24 radio(CE_PIN, CSN_PIN); // Create a Radio
 
 // Create joystick array of size three, X, Y, and Select
 int joystick[3];
+int laserSwitch[1];
 
 void setup() 
 {
@@ -31,14 +54,18 @@ void setup()
   radio.openWritingPipe(pipe);
 }//close setup
 
-void loop() {
+void loop() 
+{
 
   joystick[0]=analogRead(JOYSTICK_X);
   joystick[1]=analogRead(JOYSTICK_Y);
   joystick[2]=digitalRead(SELECT);
-
+  laserSwitch[0]=digitalRead(LASER_SW);
+  
   radio.write( joystick, sizeof( joystick) );
-  delay(100);
+  delay(10);
+  radio.write( laserSwitch, sizeof( laserSwitch) );
+  delay(10);
   
   Serial.print("Joystick is at: X: "); 
   Serial.print(joystick[0]);
@@ -46,6 +73,7 @@ void loop() {
   Serial.println(joystick[1]);
   Serial.print("Select = ");
   Serial.println(joystick[2]);
-  
- delay(1000);
+  Serial.print("Laser switch is: ");
+  Serial.println(laserSwitch[0]);
+
 }//close Loop
