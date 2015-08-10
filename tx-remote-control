@@ -1,15 +1,13 @@
 #include <SPI.h>
 #include <nRF24L01.h>
 #include <RF24.h>
+
 /*-----( Declare Constants and Pin Numbers )-----*/
 #define CE_PIN   9
 #define CSN_PIN 10
-#define JOYSTICK1_Y A0
-#define JOYSTICK1_X A1
-#define JOYSTICK2_Y A2
-#define JOYSTICK2_X A3
-#define SELECT1 2
-#define SELECT2 4
+#define JOYSTICK_X A0
+#define JOYSTICK_Y A1
+#define SELECT A2
 
 // NOTE: the "LL" at the end of the constant is "LongLong" type
 const uint64_t pipe = 0xE8E8F0F0E1LL; // Define the transmit pipe
@@ -19,18 +17,14 @@ RF24 radio(CE_PIN, CSN_PIN); // Create a Radio
 
 /*-----( Declare variables )-----*/
 
-//Create 2 joystick arrays, with three items each, X, Y, Select values
-int joystick1[3];
-int joystick2[3];
+// Create joystick array of size three, X, Y, and Select
+int joystick[3];
 
-void setup() {
-  pinMode(SELECT1,INPUT);
-  pinMode(JOYSTICK1_X,INPUT);
-  pinMode(JOYSTICK1_Y,INPUT);
-
-  pinMode(SELECT2,INPUT);
-  pinMode(JOYSTICK2_X,INPUT);
-  pinMode(JOYSTICK2_Y,INPUT);
+void setup() 
+{
+  pinMode(SELECT,INPUT);
+  pinMode(JOYSTICK_X,INPUT);
+  pinMode(JOYSTICK_Y,INPUT);
 
   Serial.begin(9600);
   radio.begin();
@@ -39,35 +33,19 @@ void setup() {
 
 void loop() {
 
-  joystick1[0]=analogRead(JOYSTICK1_X);
-  joystick1[1]=analogRead(JOYSTICK1_Y);
-  joystick1[2]=digitalRead(SELECT1);
+  joystick[0]=analogRead(JOYSTICK_X);
+  joystick[1]=analogRead(JOYSTICK_Y);
+  joystick[2]=digitalRead(SELECT);
 
-  joystick2[0]=analogRead(JOYSTICK2_X);
-  joystick2[1]=analogRead(JOYSTICK2_Y);
-  joystick2[2]=digitalRead(SELECT2);
-
-  radio.write( joystick1, sizeof( joystick1) );
-  radio.write( joystick2, sizeof( joystick2 ) );
+  radio.write( joystick, sizeof( joystick) );
   delay(100);
   
-  Serial.print("Joystick 1 is at: X: "); 
-  Serial.print(joystick1[0]);
+  Serial.print("Joystick is at: X: "); 
+  Serial.print(joystick[0]);
   Serial.print("     Y: "); 
-  Serial.println(joystick1[1]);
-  Serial.print("Select1 = ");
-  Serial.println(joystick1[2]);
+  Serial.println(joystick[1]);
+  Serial.print("Select = ");
+  Serial.println(joystick[2]);
   
-  delay(100);
-
-  Serial.print("Joystick 2 is at: X: "); 
-  Serial.print(joystick2[0]);
-  Serial.print("     Y: "); 
-  Serial.println(joystick2[1]);
-  Serial.print("Select2 = ");
-  Serial.println(joystick2[2]);
-  
-
-
-  delay(1000);
+ delay(1000);
 }//close Loop
