@@ -103,18 +103,17 @@ void loop()
       else    //ELSE TURN LASER OFF
       {
         digitalWrite(LASER, LOW);
-      }*/
+      }
+      */
     }
   }
   else    //ELSE NO RADIO AVAILABLE, LED BLINKS
   {
-      
+      digitalWrite(LASER, LOW);
       digitalWrite(RX_LED, LOW); 
       delay(100); 
-      digitalWrite(LASER, HIGH);
       digitalWrite(RX_LED, HIGH);
       delay(100);
-      digitalWrite(LASER, LOW);  
       Serial.println("No radio available");
   }
 
